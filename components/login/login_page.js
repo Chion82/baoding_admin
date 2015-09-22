@@ -1,10 +1,14 @@
 import React from 'react';
-import {Link} from 'react-router';
+import {Link, History} from 'react-router';
 import md5 from 'md5';
-
 import './sass/style.scss';
+import reactMixin from 'react-mixin';
 
 class LoginPage extends React.Component {
+  constructor(props) {
+    super(props);
+    this.handleSubmit = this.handleSubmit.bind(this);
+  }
   handleSubmit(e) {
     e.preventDefault();
     let username = React.findDOMNode(this.refs.username).value;
@@ -16,6 +20,7 @@ class LoginPage extends React.Component {
       switch(data.status) {
         case 200:
           alert('登录成功');
+          this.history.pushState(null, '/user');
           break;
         default:
           alert('登录失败，请检查用户名或密码是否正确。');
@@ -28,10 +33,10 @@ class LoginPage extends React.Component {
       <div>
         <div className="LoginPage">
           <h1>管理后台</h1><br />
-          <form onSubmit={this.handleSubmit.bind(this)}>
+          <form onSubmit={this.handleSubmit}>
             <input type="text" name="user" placeholder="用户名" ref="username" />
             <input type="password" name="pass" placeholder="密码" ref="password"/>
-            <button onClick={this.handleSubmit.bind(this)}>管理员登录</button>
+            <button onClick={this.handleSubmit}>管理员登录</button>
           </form>
         </div>
 
@@ -39,5 +44,7 @@ class LoginPage extends React.Component {
     );
   }
 }
+
+reactMixin.onClass(LoginPage, History);
 
 export default LoginPage;
