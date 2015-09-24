@@ -19,7 +19,6 @@ class LoginPage extends React.Component {
     }, (data)=>{
       switch(data.status) {
         case 200:
-          alert('登录成功');
           this.history.pushState(null, '/user');
           break;
         default:

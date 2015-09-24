@@ -20486,7 +20486,7 @@
 
 	var _userUser_page2 = _interopRequireDefault(_userUser_page);
 
-	var _userReducers = __webpack_require__(263);
+	var _userReducers = __webpack_require__(266);
 
 	var _reduxThunk = __webpack_require__(273);
 
@@ -20501,7 +20501,7 @@
 	var _reactRedux = __webpack_require__(244);
 
 	var root_reducer = (0, _redux.combineReducers)({
-	  user_reducer: _userReducers.user_reducer
+	  UserManagement: _userReducers.UserManagement
 	});
 
 	var loggerMiddleware = (0, _reduxLogger2['default'])();
@@ -26026,6 +26026,8 @@
 
 	var _utilsNav_list2 = _interopRequireDefault(_utilsNav_list);
 
+	var _actions = __webpack_require__(263);
+
 	var UserPage = (function (_React$Component) {
 	  _inherits(UserPage, _React$Component);
 
@@ -26036,6 +26038,11 @@
 	  }
 
 	  _createClass(UserPage, [{
+	    key: 'componentDidMount',
+	    value: function componentDidMount() {
+	      this.props.dispatch((0, _actions.fetch_user_list)('', 1));
+	    }
+	  }, {
 	    key: 'render',
 	    value: function render() {
 	      return _react2['default'].createElement(
@@ -26053,7 +26060,14 @@
 	            'h1',
 	            null,
 	            '用户管理'
-	          )
+	          ),
+	          this.props.UserManagement && this.props.UserManagement.user_list.map(function (user_info, key) {
+	            return _react2['default'].createElement(
+	              'h1',
+	              null,
+	              user_info.business_name
+	            );
+	          })
 	        )
 	      );
 	    }
@@ -26064,7 +26078,7 @@
 
 	var select = function select(state) {
 	  return {
-	    user: state.user
+	    UserManagement: state.UserManagement
 	  };
 	};
 
@@ -27334,125 +27348,6 @@
 
 	'use strict';
 
-	var _Object$assign = __webpack_require__(264)['default'];
-
-	Object.defineProperty(exports, '__esModule', {
-	  value: true
-	});
-	exports.user_reducer = user_reducer;
-
-	var _actions = __webpack_require__(270);
-
-	function user_reducer(state, action) {
-	  switch (action.type) {
-	    case _actions.REQUEST_USERS:
-	      return _Object$assign({}, state, {
-	        user: {
-	          is_fetching: true,
-	          user_list: [],
-	          keyword: action.keyword,
-	          page: action.page
-	        }
-	      });
-	    case _actions.RECEIVED_USERS:
-	      if (action.data.status != 200) {
-	        alert('获取用户列表失败！');
-	        return state;
-	      }
-	      return _Object$assign({}, state, {
-	        user: {
-	          is_fetching: false,
-	          user_list: action.data.user_list
-	        }
-	      });
-	    default:
-	      return state || {};
-	  }
-	}
-
-/***/ },
-/* 264 */
-/***/ function(module, exports, __webpack_require__) {
-
-	module.exports = { "default": __webpack_require__(265), __esModule: true };
-
-/***/ },
-/* 265 */
-/***/ function(module, exports, __webpack_require__) {
-
-	__webpack_require__(266);
-	module.exports = __webpack_require__(171).Object.assign;
-
-/***/ },
-/* 266 */
-/***/ function(module, exports, __webpack_require__) {
-
-	// 19.1.3.1 Object.assign(target, source)
-	var $def = __webpack_require__(169);
-
-	$def($def.S + $def.F, 'Object', {assign: __webpack_require__(267)});
-
-/***/ },
-/* 267 */
-/***/ function(module, exports, __webpack_require__) {
-
-	// 19.1.2.1 Object.assign(target, source, ...)
-	var toObject = __webpack_require__(268)
-	  , IObject  = __webpack_require__(165)
-	  , enumKeys = __webpack_require__(269);
-
-	module.exports = __webpack_require__(172)(function(){
-	  return Symbol() in Object.assign({}); // Object.assign available and Symbol is native
-	}) ? function assign(target, source){   // eslint-disable-line no-unused-vars
-	  var T = toObject(target)
-	    , l = arguments.length
-	    , i = 1;
-	  while(l > i){
-	    var S      = IObject(arguments[i++])
-	      , keys   = enumKeys(S)
-	      , length = keys.length
-	      , j      = 0
-	      , key;
-	    while(length > j)T[key = keys[j++]] = S[key];
-	  }
-	  return T;
-	} : Object.assign;
-
-/***/ },
-/* 268 */
-/***/ function(module, exports, __webpack_require__) {
-
-	// 7.1.13 ToObject(argument)
-	var defined = __webpack_require__(167);
-	module.exports = function(it){
-	  return Object(defined(it));
-	};
-
-/***/ },
-/* 269 */
-/***/ function(module, exports, __webpack_require__) {
-
-	// all enumerable object keys, includes symbols
-	var $ = __webpack_require__(162);
-	module.exports = function(it){
-	  var keys       = $.getKeys(it)
-	    , getSymbols = $.getSymbols;
-	  if(getSymbols){
-	    var symbols = getSymbols(it)
-	      , isEnum  = $.isEnum
-	      , i       = 0
-	      , key;
-	    while(symbols.length > i)if(isEnum.call(it, key = symbols[i++]))keys.push(key);
-	  }
-	  return keys;
-	};
-
-/***/ },
-/* 270 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
 	var _interopRequireDefault = __webpack_require__(1)['default'];
 
 	Object.defineProperty(exports, '__esModule', {
@@ -27460,7 +27355,7 @@
 	});
 	exports.fetch_user_list = fetch_user_list;
 
-	var _isomorphicFetch = __webpack_require__(271);
+	var _isomorphicFetch = __webpack_require__(264);
 
 	var _isomorphicFetch2 = _interopRequireDefault(_isomorphicFetch);
 
@@ -27484,28 +27379,29 @@
 	};
 
 	function fetch_user_list(keyword, page) {
+
 	  return function (dispatch) {
 	    dispatch(request_users(keyword, page));
-	    return (0, _isomorphicFetch2['default'])('/api/admin/user_list?keyword=' + encodeURIComponent(keyword) + '&page=' + page).then(function (data) {
+	    $.get('/api/admin/user_list?keyword=' + encodeURIComponent(keyword) + '&page=' + page, function (data) {
 	      dispatch(received_users(data));
 	    });
 	  };
 	}
 
 /***/ },
-/* 271 */
+/* 264 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// the whatwg-fetch polyfill installs the fetch() function
 	// on the global object (window or self)
 	//
 	// Return that as the export for use in Webpack, Browserify etc.
-	__webpack_require__(272);
+	__webpack_require__(265);
 	module.exports = self.fetch.bind(self);
 
 
 /***/ },
-/* 272 */
+/* 265 */
 /***/ function(module, exports) {
 
 	(function() {
@@ -27844,6 +27740,130 @@
 	  self.fetch.polyfill = true
 	})();
 
+
+/***/ },
+/* 266 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	var _Object$assign = __webpack_require__(267)['default'];
+
+	Object.defineProperty(exports, '__esModule', {
+	  value: true
+	});
+	exports.UserManagement = UserManagement;
+
+	var _actions = __webpack_require__(263);
+
+	var _redux = __webpack_require__(252);
+
+	function UserManagement(state, action) {
+	  switch (action.type) {
+	    case _actions.REQUEST_USERS:
+	      return _Object$assign({}, state, {
+	        is_fetching: true,
+	        user_list: [],
+	        keyword: action.keyword,
+	        page: action.page
+	      });
+	    case _actions.RECEIVED_USERS:
+	      if (action.data.status != 200) {
+	        alert('获取用户列表失败！');
+	        return _Object$assign({}, state, {
+	          is_fetching: false
+	        });
+	      }
+	      return _Object$assign({}, state, {
+	        is_fetching: false,
+	        user_list: action.data.user_list
+	      });
+	    default:
+	      return state || {
+	        is_fetching: false,
+	        user_list: [],
+	        keyword: '',
+	        page: 1
+	      };
+	  }
+	}
+
+/***/ },
+/* 267 */
+/***/ function(module, exports, __webpack_require__) {
+
+	module.exports = { "default": __webpack_require__(268), __esModule: true };
+
+/***/ },
+/* 268 */
+/***/ function(module, exports, __webpack_require__) {
+
+	__webpack_require__(269);
+	module.exports = __webpack_require__(171).Object.assign;
+
+/***/ },
+/* 269 */
+/***/ function(module, exports, __webpack_require__) {
+
+	// 19.1.3.1 Object.assign(target, source)
+	var $def = __webpack_require__(169);
+
+	$def($def.S + $def.F, 'Object', {assign: __webpack_require__(270)});
+
+/***/ },
+/* 270 */
+/***/ function(module, exports, __webpack_require__) {
+
+	// 19.1.2.1 Object.assign(target, source, ...)
+	var toObject = __webpack_require__(271)
+	  , IObject  = __webpack_require__(165)
+	  , enumKeys = __webpack_require__(272);
+
+	module.exports = __webpack_require__(172)(function(){
+	  return Symbol() in Object.assign({}); // Object.assign available and Symbol is native
+	}) ? function assign(target, source){   // eslint-disable-line no-unused-vars
+	  var T = toObject(target)
+	    , l = arguments.length
+	    , i = 1;
+	  while(l > i){
+	    var S      = IObject(arguments[i++])
+	      , keys   = enumKeys(S)
+	      , length = keys.length
+	      , j      = 0
+	      , key;
+	    while(length > j)T[key = keys[j++]] = S[key];
+	  }
+	  return T;
+	} : Object.assign;
+
+/***/ },
+/* 271 */
+/***/ function(module, exports, __webpack_require__) {
+
+	// 7.1.13 ToObject(argument)
+	var defined = __webpack_require__(167);
+	module.exports = function(it){
+	  return Object(defined(it));
+	};
+
+/***/ },
+/* 272 */
+/***/ function(module, exports, __webpack_require__) {
+
+	// all enumerable object keys, includes symbols
+	var $ = __webpack_require__(162);
+	module.exports = function(it){
+	  var keys       = $.getKeys(it)
+	    , getSymbols = $.getSymbols;
+	  if(getSymbols){
+	    var symbols = getSymbols(it)
+	      , isEnum  = $.isEnum
+	      , i       = 0
+	      , key;
+	    while(symbols.length > i)if(isEnum.call(it, key = symbols[i++]))keys.push(key);
+	  }
+	  return keys;
+	};
 
 /***/ },
 /* 273 */

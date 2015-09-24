@@ -3,14 +3,14 @@ import { Router, Route, Link } from 'react-router';
 import LoginPage from './login/login_page';
 import HelloPage from './hello/hello_page';
 import UserPage from './user/user_page';
-import {user_reducer} from './user/reducers'
+import { UserManagement } from './user/reducers'
 import thunkMiddleware from 'redux-thunk';
 import createLogger from 'redux-logger';
 import { combineReducers, createStore, applyMiddleware } from 'redux';
 import { Provider } from 'react-redux';
 
 const root_reducer = combineReducers({
-  user_reducer
+  UserManagement
 });
 
 const loggerMiddleware = createLogger();
