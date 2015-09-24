@@ -1,7 +1,6 @@
 import {REQUEST_USERS, RECEIVED_USERS, CHANGE_USER_STATUS, USER_STATUS_CHANGED} from './actions';
-import {combineReducers} from 'redux';
 
-export function UserManagement (state, action) {
+export function user_management (state, action) {
   switch(action.type) {
     case REQUEST_USERS:
       return Object.assign({}, state, {

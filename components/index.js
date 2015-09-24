@@ -3,14 +3,17 @@ import { Router, Route, Link } from 'react-router';
 import LoginPage from './login/login_page';
 import HelloPage from './hello/hello_page';
 import UserPage from './user/user_page';
-import { UserManagement } from './user/reducers'
+import AdminUserPage from './admin_user/admin_user_page';
+import { user_management } from './user/reducers';
+import { admin_user_management } from './admin_user/reducers';
 import thunkMiddleware from 'redux-thunk';
 import createLogger from 'redux-logger';
 import { combineReducers, createStore, applyMiddleware } from 'redux';
 import { Provider } from 'react-redux';
 
 const root_reducer = combineReducers({
-  UserManagement
+  user_management,
+  admin_user_management
 });
 
 const loggerMiddleware = createLogger();
@@ -31,6 +34,7 @@ class App extends React.Component {
             <Route path="/" component={LoginPage} />
             <Route path="/hello" component={HelloPage} />
             <Route path="/user" component={UserPage} />
+            <Route path="/admin_user" component={AdminUserPage} />
           </Router>
         }
       </Provider>

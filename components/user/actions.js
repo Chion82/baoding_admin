@@ -51,7 +51,7 @@ export function change_user_status(username, new_status) {
       (data)=>{
         dispatch(user_status_changed());
         let state = getState();
-        dispatch(fetch_user_list(state.UserManagement.user_status, state.UserManagement.keyword, state.UserManagement.page));
+        dispatch(fetch_user_list(state.user_management.user_status, state.user_management.keyword, state.user_management.page));
       });
   }
 }
