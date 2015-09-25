@@ -20486,13 +20486,25 @@
 
 	var _userUser_page2 = _interopRequireDefault(_userUser_page);
 
-	var _userReducers = __webpack_require__(266);
+	var _orderOrder_page = __webpack_require__(268);
 
-	var _reduxThunk = __webpack_require__(273);
+	var _orderOrder_page2 = _interopRequireDefault(_orderOrder_page);
+
+	var _admin_userAdmin_user_page = __webpack_require__(272);
+
+	var _admin_userAdmin_user_page2 = _interopRequireDefault(_admin_userAdmin_user_page);
+
+	var _userReducers = __webpack_require__(276);
+
+	var _admin_userReducers = __webpack_require__(283);
+
+	var _orderReducers = __webpack_require__(284);
+
+	var _reduxThunk = __webpack_require__(285);
 
 	var _reduxThunk2 = _interopRequireDefault(_reduxThunk);
 
-	var _reduxLogger = __webpack_require__(274);
+	var _reduxLogger = __webpack_require__(286);
 
 	var _reduxLogger2 = _interopRequireDefault(_reduxLogger);
 
@@ -20501,7 +20513,9 @@
 	var _reactRedux = __webpack_require__(244);
 
 	var root_reducer = (0, _redux.combineReducers)({
-	  UserManagement: _userReducers.UserManagement
+	  user_management: _userReducers.user_management,
+	  admin_user_management: _admin_userReducers.admin_user_management,
+	  order_management: _orderReducers.order_management
 	});
 
 	var loggerMiddleware = (0, _reduxLogger2['default'])();
@@ -20533,7 +20547,9 @@
 	            null,
 	            _react2['default'].createElement(_reactRouter.Route, { path: '/', component: _loginLogin_page2['default'] }),
 	            _react2['default'].createElement(_reactRouter.Route, { path: '/hello', component: _helloHello_page2['default'] }),
-	            _react2['default'].createElement(_reactRouter.Route, { path: '/user', component: _userUser_page2['default'] })
+	            _react2['default'].createElement(_reactRouter.Route, { path: '/user', component: _userUser_page2['default'] }),
+	            _react2['default'].createElement(_reactRouter.Route, { path: '/admin_user', component: _admin_userAdmin_user_page2['default'] }),
+	            _react2['default'].createElement(_reactRouter.Route, { path: '/order', component: _orderOrder_page2['default'] })
 	          );
 	        }
 	      );
@@ -24864,7 +24880,6 @@
 	      }, function (data) {
 	        switch (data.status) {
 	          case 200:
-	            alert('登录成功');
 	            _this.history.pushState(null, '/user');
 	            break;
 	          default:
@@ -26028,6 +26043,14 @@
 
 	var _actions = __webpack_require__(263);
 
+	var _user_list = __webpack_require__(266);
+
+	var _user_list2 = _interopRequireDefault(_user_list);
+
+	var _user_selector = __webpack_require__(267);
+
+	var _user_selector2 = _interopRequireDefault(_user_selector);
+
 	var UserPage = (function (_React$Component) {
 	  _inherits(UserPage, _React$Component);
 
@@ -26040,7 +26063,20 @@
 	  _createClass(UserPage, [{
 	    key: 'componentDidMount',
 	    value: function componentDidMount() {
-	      this.props.dispatch((0, _actions.fetch_user_list)('', 1));
+	      this.props.dispatch((0, _actions.fetch_user_list)('-1', '', 1));
+	    }
+	  }, {
+	    key: 'load_page',
+	    value: function load_page(user_status, keyword, page) {
+	      if (page < 1 || page > this.props.user_management.total_pages && this.props.user_management.total_pages > 0) {
+	        return;
+	      }
+	      this.props.dispatch((0, _actions.fetch_user_list)(user_status, keyword, page));
+	    }
+	  }, {
+	    key: 'on_change_user_status',
+	    value: function on_change_user_status(username, new_status) {
+	      this.props.dispatch((0, _actions.change_user_status)(username, new_status));
 	    }
 	  }, {
 	    key: 'render',
@@ -26061,13 +26097,25 @@
 	            null,
 	            '用户管理'
 	          ),
-	          this.props.UserManagement && this.props.UserManagement.user_list.map(function (user_info, key) {
-	            return _react2['default'].createElement(
-	              'h1',
-	              null,
-	              user_info.business_name
-	            );
-	          })
+	          _react2['default'].createElement(_user_selector2['default'], { refresh: this.load_page.bind(this) }),
+	          _react2['default'].createElement(_user_list2['default'], { user_list: this.props.user_management.user_list, on_change_user_status: this.on_change_user_status.bind(this) }),
+	          _react2['default'].createElement(
+	            'div',
+	            null,
+	            _react2['default'].createElement(
+	              'a',
+	              { href: 'javascript:void(0)', onClick: this.load_page.bind(this, this.props.user_management.user_status, this.props.user_management.keyword, this.props.user_management.page - 1) },
+	              '上一页'
+	            ),
+	            this.props.user_management.page,
+	            ' / ',
+	            this.props.user_management.total_pages,
+	            _react2['default'].createElement(
+	              'a',
+	              { href: 'javascript:void(0)', onClick: this.load_page.bind(this, this.props.user_management.user_status, this.props.user_management.keyword, this.props.user_management.page + 1) },
+	              '下一页'
+	            )
+	          )
 	        )
 	      );
 	    }
@@ -26078,7 +26126,7 @@
 
 	var select = function select(state) {
 	  return {
-	    UserManagement: state.UserManagement
+	    user_management: state.user_management
 	  };
 	};
 
@@ -27299,6 +27347,10 @@
 
 	var _reactRouter = __webpack_require__(188);
 
+	var _reactMixin = __webpack_require__(239);
+
+	var _reactMixin2 = _interopRequireDefault(_reactMixin);
+
 	var NavList = (function (_React$Component) {
 	  _inherits(NavList, _React$Component);
 
@@ -27309,6 +27361,15 @@
 	  }
 
 	  _createClass(NavList, [{
+	    key: 'logout',
+	    value: function logout() {
+	      var _this = this;
+
+	      $.get('/api/admin/logout.do', function (data) {
+	        _this.history.pushState(null, '/');
+	      });
+	    }
+	  }, {
 	    key: 'render',
 	    value: function render() {
 	      return _react2['default'].createElement(
@@ -27331,6 +27392,24 @@
 	            { to: '/order' },
 	            '委单管理'
 	          )
+	        ),
+	        _react2['default'].createElement(
+	          'li',
+	          null,
+	          _react2['default'].createElement(
+	            _reactRouter.Link,
+	            { to: '/admin_user' },
+	            '管理员管理'
+	          )
+	        ),
+	        _react2['default'].createElement(
+	          'li',
+	          null,
+	          _react2['default'].createElement(
+	            'a',
+	            { href: 'javascript:void(0)', onClick: this.logout.bind(this) },
+	            '退出登录'
+	          )
 	        )
 	      );
 	    }
@@ -27338,6 +27417,8 @@
 
 	  return NavList;
 	})(_react2['default'].Component);
+
+	_reactMixin2['default'].onClass(NavList, _reactRouter.History);
 
 	exports['default'] = NavList;
 	module.exports = exports['default'];
@@ -27354,6 +27435,7 @@
 	  value: true
 	});
 	exports.fetch_user_list = fetch_user_list;
+	exports.change_user_status = change_user_status;
 
 	var _isomorphicFetch = __webpack_require__(264);
 
@@ -27361,9 +27443,10 @@
 
 	var REQUEST_USERS = 'REQUEST_USERS';
 	exports.REQUEST_USERS = REQUEST_USERS;
-	var request_users = function request_users(keyword, page) {
+	var request_users = function request_users(user_status, keyword, page) {
 	  return {
 	    type: REQUEST_USERS,
+	    user_status: user_status,
 	    keyword: keyword,
 	    page: page
 	  };
@@ -27378,12 +27461,40 @@
 	  };
 	};
 
-	function fetch_user_list(keyword, page) {
+	var CHANGE_USER_STATUS = 'CHANGE_USER_STATUS';
+	exports.CHANGE_USER_STATUS = CHANGE_USER_STATUS;
+	var change_user_status = function change_user_status(username, new_status) {
+	  return {
+	    type: CHANGE_USER_STATUS,
+	    username: username,
+	    new_status: new_status
+	  };
+	};
 
+	var USER_STATUS_CHANGED = 'USER_STATUS_CHANGED';
+	exports.USER_STATUS_CHANGED = USER_STATUS_CHANGED;
+	var user_status_changed = function user_status_changed() {
+	  return {
+	    type: USER_STATUS_CHANGED
+	  };
+	};
+
+	function fetch_user_list(user_status, keyword, page) {
 	  return function (dispatch) {
-	    dispatch(request_users(keyword, page));
-	    $.get('/api/admin/user_list?keyword=' + encodeURIComponent(keyword) + '&page=' + page, function (data) {
+	    dispatch(request_users(user_status, keyword, page));
+	    $.get('/api/admin/user_list?keyword=' + encodeURIComponent(keyword) + '&status=' + user_status + '&page=' + page, function (data) {
 	      dispatch(received_users(data));
+	    });
+	  };
+	}
+
+	function change_user_status(username, new_status) {
+	  return function (dispatch, getState) {
+	    dispatch(change_user_status(username, new_status));
+	    $.get('/api/admin/change_user_status.do?username=' + encodeURIComponent(username) + '&status=' + new_status, function (data) {
+	      dispatch(user_status_changed());
+	      var state = getState();
+	      dispatch(fetch_user_list(state.user_management.user_status, state.user_management.keyword, state.user_management.page));
 	    });
 	  };
 	}
@@ -27747,25 +27858,1295 @@
 
 	'use strict';
 
-	var _Object$assign = __webpack_require__(267)['default'];
+	var _get = __webpack_require__(159)['default'];
+
+	var _inherits = __webpack_require__(173)['default'];
+
+	var _createClass = __webpack_require__(184)['default'];
+
+	var _classCallCheck = __webpack_require__(187)['default'];
+
+	var _interopRequireDefault = __webpack_require__(1)['default'];
 
 	Object.defineProperty(exports, '__esModule', {
 	  value: true
 	});
-	exports.UserManagement = UserManagement;
+
+	var _react = __webpack_require__(2);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _md5 = __webpack_require__(231);
+
+	var _md52 = _interopRequireDefault(_md5);
+
+	var UserList = (function (_React$Component) {
+	  _inherits(UserList, _React$Component);
+
+	  function UserList() {
+	    _classCallCheck(this, UserList);
+
+	    _get(Object.getPrototypeOf(UserList.prototype), 'constructor', this).apply(this, arguments);
+	  }
+
+	  _createClass(UserList, [{
+	    key: 'handleChangeUserStatus',
+	    value: function handleChangeUserStatus(username, new_status) {
+	      this.props.on_change_user_status(username, new_status);
+	    }
+	  }, {
+	    key: 'handleModifyUserDetails',
+	    value: function handleModifyUserDetails(username) {
+	      $.get('/api/admin/login_as_user.do?username=' + encodeURIComponent(username), function (data) {
+	        if (data.status != 200) {
+	          return;
+	        }
+	        window.location.href = '/user_center/details_info.html';
+	      });
+	    }
+	  }, {
+	    key: 'handleChangeUserPassword',
+	    value: function handleChangeUserPassword(username) {
+	      $.post('/api/admin/change_user_password.do', {
+	        username: username,
+	        password: (0, _md52['default'])((0, _md52['default'])(_react2['default'].findDOMNode(this.refs['new_password_' + username]).value))
+	      }, function (data) {
+	        if (data.status == 200) {
+	          alert('修改成功');
+	        } else {
+	          alert('修改失败');
+	        }
+	      });
+	    }
+	  }, {
+	    key: 'render',
+	    value: function render() {
+	      var _this = this;
+
+	      return _react2['default'].createElement(
+	        'table',
+	        null,
+	        _react2['default'].createElement(
+	          'thead',
+	          null,
+	          _react2['default'].createElement(
+	            'tr',
+	            null,
+	            _react2['default'].createElement(
+	              'th',
+	              null,
+	              '用户名'
+	            ),
+	            _react2['default'].createElement(
+	              'th',
+	              null,
+	              '状态'
+	            ),
+	            _react2['default'].createElement(
+	              'th',
+	              null,
+	              '用户类型'
+	            ),
+	            _react2['default'].createElement(
+	              'th',
+	              null,
+	              '企业名称'
+	            ),
+	            _react2['default'].createElement(
+	              'th',
+	              null,
+	              '联系人姓名'
+	            ),
+	            _react2['default'].createElement(
+	              'th',
+	              null,
+	              '联系方式'
+	            ),
+	            _react2['default'].createElement(
+	              'th',
+	              null,
+	              '邮箱'
+	            ),
+	            _react2['default'].createElement(
+	              'th',
+	              null,
+	              '操作'
+	            )
+	          )
+	        ),
+	        _react2['default'].createElement(
+	          'tbody',
+	          null,
+	          this.props.user_list.map(function (user_info, index) {
+	            return _react2['default'].createElement(
+	              'tr',
+	              null,
+	              _react2['default'].createElement(
+	                'td',
+	                null,
+	                user_info.username
+	              ),
+	              _react2['default'].createElement(
+	                'td',
+	                null,
+	                user_info.status == 0 && '账号被禁用',
+	                user_info.status == 1 && '审核中',
+	                user_info.status == 2 && '审核不通过',
+	                user_info.status == 3 && '正常'
+	              ),
+	              _react2['default'].createElement(
+	                'td',
+	                null,
+	                user_info.user_type == 0 && '委单方',
+	                user_info.user_type == 1 && '催收方'
+	              ),
+	              _react2['default'].createElement(
+	                'td',
+	                null,
+	                user_info.business_name
+	              ),
+	              _react2['default'].createElement(
+	                'td',
+	                null,
+	                user_info.contact_name
+	              ),
+	              _react2['default'].createElement(
+	                'td',
+	                null,
+	                user_info.contact_phone
+	              ),
+	              _react2['default'].createElement(
+	                'td',
+	                null,
+	                user_info.contact_email
+	              ),
+	              _react2['default'].createElement(
+	                'td',
+	                { style: { width: '400px' } },
+	                _react2['default'].createElement('input', { type: 'text', placeholder: '修改密码', ref: 'new_password_' + user_info.username }),
+	                _react2['default'].createElement(
+	                  'a',
+	                  { href: 'javascript:void(0)', onClick: _this.handleChangeUserPassword.bind(_this, user_info.username) },
+	                  '确认修改密码'
+	                ),
+	                _react2['default'].createElement('br', null),
+	                _react2['default'].createElement(
+	                  'a',
+	                  { href: 'javascript:void(0)', onClick: _this.handleModifyUserDetails.bind(_this, user_info.username) },
+	                  '编辑详细信息'
+	                ),
+	                _react2['default'].createElement('br', null),
+	                '状态设为：',
+	                _react2['default'].createElement('br', null),
+	                _react2['default'].createElement(
+	                  'a',
+	                  { href: 'javascript:void(0)', onClick: _this.handleChangeUserStatus.bind(_this, user_info.username, 3) },
+	                  '正常'
+	                ),
+	                _react2['default'].createElement('br', null),
+	                _react2['default'].createElement(
+	                  'a',
+	                  { href: 'javascript:void(0)', onClick: _this.handleChangeUserStatus.bind(_this, user_info.username, 1) },
+	                  '审核中'
+	                ),
+	                _react2['default'].createElement('br', null),
+	                _react2['default'].createElement(
+	                  'a',
+	                  { href: 'javascript:void(0)', onClick: _this.handleChangeUserStatus.bind(_this, user_info.username, 2) },
+	                  '审核不通过'
+	                ),
+	                _react2['default'].createElement('br', null),
+	                _react2['default'].createElement(
+	                  'a',
+	                  { href: 'javascript:void(0)', onClick: _this.handleChangeUserStatus.bind(_this, user_info.username, 0) },
+	                  '禁用'
+	                ),
+	                _react2['default'].createElement('br', null)
+	              )
+	            );
+	          })
+	        )
+	      );
+	    }
+	  }]);
+
+	  return UserList;
+	})(_react2['default'].Component);
+
+	exports['default'] = UserList;
+	module.exports = exports['default'];
+
+/***/ },
+/* 267 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+
+	var _get = __webpack_require__(159)["default"];
+
+	var _inherits = __webpack_require__(173)["default"];
+
+	var _createClass = __webpack_require__(184)["default"];
+
+	var _classCallCheck = __webpack_require__(187)["default"];
+
+	var _interopRequireDefault = __webpack_require__(1)["default"];
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	var _react = __webpack_require__(2);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var UserSelector = (function (_React$Component) {
+	  _inherits(UserSelector, _React$Component);
+
+	  function UserSelector() {
+	    _classCallCheck(this, UserSelector);
+
+	    _get(Object.getPrototypeOf(UserSelector.prototype), "constructor", this).apply(this, arguments);
+	  }
+
+	  _createClass(UserSelector, [{
+	    key: "handleSubmit",
+	    value: function handleSubmit() {
+	      this.props.refresh(_react2["default"].findDOMNode(this.refs.user_status_selector).value, _react2["default"].findDOMNode(this.refs.user_keyword).value, 1);
+	    }
+	  }, {
+	    key: "render",
+	    value: function render() {
+	      return _react2["default"].createElement(
+	        "div",
+	        { className: "panel" },
+	        _react2["default"].createElement(
+	          "div",
+	          { className: "row" },
+	          _react2["default"].createElement(
+	            "div",
+	            { className: "small-3 columns" },
+	            "筛选用户："
+	          ),
+	          _react2["default"].createElement(
+	            "div",
+	            { className: "small-3 columns" },
+	            _react2["default"].createElement(
+	              "select",
+	              { ref: "user_status_selector" },
+	              _react2["default"].createElement(
+	                "option",
+	                { value: "-1" },
+	                "全部"
+	              ),
+	              _react2["default"].createElement(
+	                "option",
+	                { value: "0" },
+	                "被禁用"
+	              ),
+	              _react2["default"].createElement(
+	                "option",
+	                { value: "1" },
+	                "审核中"
+	              ),
+	              _react2["default"].createElement(
+	                "option",
+	                { value: "2" },
+	                "审核不通过"
+	              ),
+	              _react2["default"].createElement(
+	                "option",
+	                { value: "3" },
+	                "正常"
+	              )
+	            )
+	          ),
+	          _react2["default"].createElement(
+	            "div",
+	            { className: "small-3 columns" },
+	            _react2["default"].createElement("input", { type: "text", ref: "user_keyword", placeholder: "用户名/公司名称" })
+	          ),
+	          _react2["default"].createElement(
+	            "div",
+	            { className: "small-3 columns" },
+	            _react2["default"].createElement(
+	              "button",
+	              { onClick: this.handleSubmit.bind(this), style: { display: 'inline' } },
+	              "确定"
+	            )
+	          )
+	        )
+	      );
+	    }
+	  }]);
+
+	  return UserSelector;
+	})(_react2["default"].Component);
+
+	exports["default"] = UserSelector;
+	module.exports = exports["default"];
+
+/***/ },
+/* 268 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	var _get = __webpack_require__(159)['default'];
+
+	var _inherits = __webpack_require__(173)['default'];
+
+	var _createClass = __webpack_require__(184)['default'];
+
+	var _classCallCheck = __webpack_require__(187)['default'];
+
+	var _interopRequireDefault = __webpack_require__(1)['default'];
+
+	Object.defineProperty(exports, '__esModule', {
+	  value: true
+	});
+
+	var _react = __webpack_require__(2);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _reactRedux = __webpack_require__(244);
+
+	var _actions = __webpack_require__(269);
+
+	var _utilsNav_list = __webpack_require__(262);
+
+	var _utilsNav_list2 = _interopRequireDefault(_utilsNav_list);
+
+	var _order_list = __webpack_require__(270);
+
+	var _order_list2 = _interopRequireDefault(_order_list);
+
+	var _order_selector = __webpack_require__(271);
+
+	var _order_selector2 = _interopRequireDefault(_order_selector);
+
+	var OrderPage = (function (_React$Component) {
+	  _inherits(OrderPage, _React$Component);
+
+	  function OrderPage() {
+	    _classCallCheck(this, OrderPage);
+
+	    _get(Object.getPrototypeOf(OrderPage.prototype), 'constructor', this).apply(this, arguments);
+	  }
+
+	  _createClass(OrderPage, [{
+	    key: 'componentDidMount',
+	    value: function componentDidMount() {
+	      this.props.dispatch((0, _actions.fetch_order_list)('', '-1', 1));
+	    }
+	  }, {
+	    key: 'loadPage',
+	    value: function loadPage(keyword, status, page) {
+	      if (page < 1 || page > this.props.order_management.total_page && this.props.order_management.total_page > 0) {
+	        return;
+	      }
+	      this.props.dispatch((0, _actions.fetch_order_list)(keyword, status, page));
+	    }
+	  }, {
+	    key: 'updateOrderStatus',
+	    value: function updateOrderStatus(order_id, status) {
+	      var _this = this;
+
+	      $.post('/api/admin/change_order_status.do', {
+	        order_id: order_id,
+	        status: status
+	      }, function (data) {
+	        _this.props.dispatch((0, _actions.fetch_order_list)(_this.props.order_management.keyword, _this.props.order_management.status, _this.props.order_management.page));
+	      });
+	    }
+	  }, {
+	    key: 'handleNewOrder',
+	    value: function handleNewOrder() {
+	      $.get('/api/admin/login_as_user.do?username=admin', function (data) {
+	        if (data.status != 200) {
+	          alert('模拟登录失败。请确认已注册admin用户。');
+	        }
+	        window.location.href = '/user_center/post_order.html';
+	      });
+	    }
+	  }, {
+	    key: 'render',
+	    value: function render() {
+	      return _react2['default'].createElement(
+	        'div',
+	        { className: 'row' },
+	        _react2['default'].createElement(
+	          'div',
+	          { className: 'medium-3 columns' },
+	          _react2['default'].createElement(_utilsNav_list2['default'], null)
+	        ),
+	        _react2['default'].createElement(
+	          'div',
+	          { className: 'medium-9 columns' },
+	          _react2['default'].createElement(
+	            'h1',
+	            null,
+	            '委单管理'
+	          ),
+	          _react2['default'].createElement(
+	            'a',
+	            { href: 'javascript:void(0)', onClick: this.handleNewOrder.bind(this) },
+	            '发布新委单'
+	          ),
+	          _react2['default'].createElement(_order_selector2['default'], { handle_submit: this.loadPage.bind(this) }),
+	          _react2['default'].createElement(_order_list2['default'], { order_list: this.props.order_management.order_list, handle_update_order_status: this.updateOrderStatus.bind(this) }),
+	          _react2['default'].createElement(
+	            'div',
+	            null,
+	            _react2['default'].createElement(
+	              'a',
+	              { href: 'javascript:void(0)', onClick: this.loadPage.bind(this, this.props.order_management.keyword, this.props.order_management.status, this.props.order_management.page - 1) },
+	              '上一页'
+	            ),
+	            this.props.order_management.page,
+	            ' / ',
+	            this.props.order_management.total_page,
+	            _react2['default'].createElement(
+	              'a',
+	              { href: 'javascript:void(0)', onClick: this.loadPage.bind(this, this.props.order_management.keyword, this.props.order_management.status, this.props.order_management.page + 1) },
+	              '下一页'
+	            )
+	          )
+	        )
+	      );
+	    }
+	  }]);
+
+	  return OrderPage;
+	})(_react2['default'].Component);
+
+	exports['default'] = (0, _reactRedux.connect)(function (state) {
+	  return {
+	    order_management: state.order_management
+	  };
+	})(OrderPage);
+	module.exports = exports['default'];
+
+/***/ },
+/* 269 */
+/***/ function(module, exports) {
+
+	'use strict';
+
+	Object.defineProperty(exports, '__esModule', {
+	  value: true
+	});
+	exports.request_order_list = request_order_list;
+	exports.received_order_list = received_order_list;
+	exports.fetch_order_list = fetch_order_list;
+	var REQUEST_ORDER_LIST = 'REQUEST_ORDER_LIST';
+	exports.REQUEST_ORDER_LIST = REQUEST_ORDER_LIST;
+	var RECEIVED_ORDER_LIST = 'RECEIVED_ORDER_LIST';
+
+	exports.RECEIVED_ORDER_LIST = RECEIVED_ORDER_LIST;
+
+	function request_order_list(keyword, status, page) {
+	  return {
+	    type: REQUEST_ORDER_LIST,
+	    keyword: keyword,
+	    page: page,
+	    status: status
+	  };
+	}
+
+	function received_order_list(data) {
+	  return {
+	    type: RECEIVED_ORDER_LIST,
+	    data: data
+	  };
+	}
+
+	function fetch_order_list(keyword, status, page) {
+	  return function (dispatch, getState) {
+	    dispatch(request_order_list(keyword, status, page));
+	    $.get('/api/admin/order_list?keyword=' + encodeURIComponent(keyword) + ('&status=' + status + '&page=' + page), function (data) {
+	      dispatch(received_order_list(data));
+	    });
+	  };
+	}
+
+/***/ },
+/* 270 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	var _get = __webpack_require__(159)['default'];
+
+	var _inherits = __webpack_require__(173)['default'];
+
+	var _createClass = __webpack_require__(184)['default'];
+
+	var _classCallCheck = __webpack_require__(187)['default'];
+
+	var _interopRequireDefault = __webpack_require__(1)['default'];
+
+	Object.defineProperty(exports, '__esModule', {
+	  value: true
+	});
+
+	var _react = __webpack_require__(2);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var OrderList = (function (_React$Component) {
+	  _inherits(OrderList, _React$Component);
+
+	  function OrderList() {
+	    _classCallCheck(this, OrderList);
+
+	    _get(Object.getPrototypeOf(OrderList.prototype), 'constructor', this).apply(this, arguments);
+	  }
+
+	  _createClass(OrderList, [{
+	    key: 'handleModify',
+	    value: function handleModify(order_id) {
+	      $.get('/api/admin/login_as_user.do?username=admin', function (data) {
+	        if (data.status != 200) {
+	          alert('模拟登录失败。请确认已注册admin用户。');
+	        }
+	        window.location.href = '/user_center/edit_order.html?order_id=' + order_id;
+	      });
+	    }
+	  }, {
+	    key: 'handleUpdateOrderStatus',
+	    value: function handleUpdateOrderStatus(order_id) {
+	      this.props.handle_update_order_status(order_id, _react2['default'].findDOMNode(this.refs['status_input_' + order_id]).value);
+	    }
+	  }, {
+	    key: 'render',
+	    value: function render() {
+	      var _this = this;
+
+	      return _react2['default'].createElement(
+	        'table',
+	        null,
+	        _react2['default'].createElement(
+	          'thead',
+	          null,
+	          _react2['default'].createElement(
+	            'tr',
+	            null,
+	            _react2['default'].createElement(
+	              'th',
+	              null,
+	              '委单编号'
+	            ),
+	            _react2['default'].createElement(
+	              'th',
+	              null,
+	              '状态'
+	            ),
+	            _react2['default'].createElement(
+	              'th',
+	              null,
+	              '债务人类型'
+	            ),
+	            _react2['default'].createElement(
+	              'th',
+	              null,
+	              '债务人名称'
+	            ),
+	            _react2['default'].createElement(
+	              'th',
+	              null,
+	              '发布者'
+	            ),
+	            _react2['default'].createElement(
+	              'th',
+	              null,
+	              '接单人'
+	            ),
+	            _react2['default'].createElement(
+	              'th',
+	              null,
+	              '操作'
+	            )
+	          )
+	        ),
+	        _react2['default'].createElement(
+	          'tbody',
+	          null,
+	          this.props.order_list.map(function (order_info, index) {
+	            return _react2['default'].createElement(
+	              'tr',
+	              null,
+	              _react2['default'].createElement(
+	                'td',
+	                null,
+	                order_info.order_id
+	              ),
+	              _react2['default'].createElement(
+	                'td',
+	                null,
+	                order_info.status == 0 && '被取消',
+	                order_info.status == 1 && '审核中',
+	                order_info.status == 2 && '审核不通过',
+	                order_info.status == 3 && '电催进行中',
+	                order_info.status == 4 && '已上线',
+	                order_info.status == 5 && '竞标中',
+	                order_info.status == 6 && '催收中',
+	                order_info.status == 7 && '结算中',
+	                order_info.status == 8 && '已结算'
+	              ),
+	              _react2['default'].createElement(
+	                'td',
+	                null,
+	                order_info.debtor_type == 0 && '个人',
+	                order_info.debtor_type == 1 && '企业'
+	              ),
+	              _react2['default'].createElement(
+	                'td',
+	                null,
+	                order_info.debtor_name
+	              ),
+	              _react2['default'].createElement(
+	                'td',
+	                null,
+	                order_info.post_user
+	              ),
+	              _react2['default'].createElement(
+	                'td',
+	                null,
+	                order_info.accept_user
+	              ),
+	              _react2['default'].createElement(
+	                'td',
+	                null,
+	                _react2['default'].createElement(
+	                  'a',
+	                  { href: 'javascript:void(0)', onClick: _this.handleModify.bind(_this, order_info.order_id) },
+	                  '编辑委单详情'
+	                ),
+	                _react2['default'].createElement('br', null),
+	                '修改状态：',
+	                _react2['default'].createElement(
+	                  'select',
+	                  { ref: 'status_input_' + order_info.order_id },
+	                  _react2['default'].createElement(
+	                    'option',
+	                    { value: '0' },
+	                    '被取消'
+	                  ),
+	                  _react2['default'].createElement(
+	                    'option',
+	                    { value: '1' },
+	                    '审核中'
+	                  ),
+	                  _react2['default'].createElement(
+	                    'option',
+	                    { value: '2' },
+	                    '审核不通过'
+	                  ),
+	                  _react2['default'].createElement(
+	                    'option',
+	                    { value: '3' },
+	                    '电催进行中'
+	                  ),
+	                  _react2['default'].createElement(
+	                    'option',
+	                    { value: '4' },
+	                    '已上线'
+	                  ),
+	                  _react2['default'].createElement(
+	                    'option',
+	                    { value: '5' },
+	                    '竞标中'
+	                  ),
+	                  _react2['default'].createElement(
+	                    'option',
+	                    { value: '6' },
+	                    '催收中'
+	                  ),
+	                  _react2['default'].createElement(
+	                    'option',
+	                    { value: '7' },
+	                    '结算中'
+	                  ),
+	                  _react2['default'].createElement(
+	                    'option',
+	                    { value: '8' },
+	                    '已结算'
+	                  )
+	                ),
+	                _react2['default'].createElement(
+	                  'a',
+	                  { href: 'javascript:void(0)', onClick: _this.handleUpdateOrderStatus.bind(_this, order_info.order_id) },
+	                  '确认修改'
+	                )
+	              )
+	            );
+	          })
+	        )
+	      );
+	    }
+	  }]);
+
+	  return OrderList;
+	})(_react2['default'].Component);
+
+	exports['default'] = OrderList;
+	module.exports = exports['default'];
+
+/***/ },
+/* 271 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+
+	var _get = __webpack_require__(159)["default"];
+
+	var _inherits = __webpack_require__(173)["default"];
+
+	var _createClass = __webpack_require__(184)["default"];
+
+	var _classCallCheck = __webpack_require__(187)["default"];
+
+	var _interopRequireDefault = __webpack_require__(1)["default"];
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	var _react = __webpack_require__(2);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var OrderSelector = (function (_React$Component) {
+	  _inherits(OrderSelector, _React$Component);
+
+	  function OrderSelector() {
+	    _classCallCheck(this, OrderSelector);
+
+	    _get(Object.getPrototypeOf(OrderSelector.prototype), "constructor", this).apply(this, arguments);
+	  }
+
+	  _createClass(OrderSelector, [{
+	    key: "handleSubmit",
+	    value: function handleSubmit() {
+	      this.props.handle_submit(_react2["default"].findDOMNode(this.refs.keyword_input).value, _react2["default"].findDOMNode(this.refs.status_input).value, 1);
+	    }
+	  }, {
+	    key: "render",
+	    value: function render() {
+	      return _react2["default"].createElement(
+	        "div",
+	        { className: "panel" },
+	        _react2["default"].createElement(
+	          "div",
+	          { className: "row" },
+	          _react2["default"].createElement(
+	            "div",
+	            { className: "small-3 columns" },
+	            "筛选委单："
+	          ),
+	          _react2["default"].createElement(
+	            "div",
+	            { className: "small-3 columns" },
+	            _react2["default"].createElement(
+	              "select",
+	              { ref: "status_input" },
+	              _react2["default"].createElement(
+	                "option",
+	                { value: "-1" },
+	                "全部"
+	              ),
+	              _react2["default"].createElement(
+	                "option",
+	                { value: "0" },
+	                "被取消"
+	              ),
+	              _react2["default"].createElement(
+	                "option",
+	                { value: "1" },
+	                "审核中"
+	              ),
+	              _react2["default"].createElement(
+	                "option",
+	                { value: "2" },
+	                "审核不通过"
+	              ),
+	              _react2["default"].createElement(
+	                "option",
+	                { value: "3" },
+	                "电催进行中"
+	              ),
+	              _react2["default"].createElement(
+	                "option",
+	                { value: "4" },
+	                "已上线"
+	              ),
+	              _react2["default"].createElement(
+	                "option",
+	                { value: "5" },
+	                "竞标中"
+	              ),
+	              _react2["default"].createElement(
+	                "option",
+	                { value: "6" },
+	                "催收中"
+	              ),
+	              _react2["default"].createElement(
+	                "option",
+	                { value: "7" },
+	                "结算中"
+	              ),
+	              _react2["default"].createElement(
+	                "option",
+	                { value: "8" },
+	                "已结算"
+	              )
+	            )
+	          ),
+	          _react2["default"].createElement(
+	            "div",
+	            { className: "small-3 columns" },
+	            _react2["default"].createElement("input", { type: "text", ref: "keyword_input", placeholder: "委单编号/发布者用户名/接单者用户名/债务人名称" })
+	          ),
+	          _react2["default"].createElement(
+	            "div",
+	            { className: "small-3 columns" },
+	            _react2["default"].createElement(
+	              "button",
+	              { className: "button tiny", onClick: this.handleSubmit.bind(this) },
+	              "确定"
+	            )
+	          )
+	        )
+	      );
+	    }
+	  }]);
+
+	  return OrderSelector;
+	})(_react2["default"].Component);
+
+	exports["default"] = OrderSelector;
+	module.exports = exports["default"];
+
+/***/ },
+/* 272 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	var _get = __webpack_require__(159)['default'];
+
+	var _inherits = __webpack_require__(173)['default'];
+
+	var _createClass = __webpack_require__(184)['default'];
+
+	var _classCallCheck = __webpack_require__(187)['default'];
+
+	var _interopRequireDefault = __webpack_require__(1)['default'];
+
+	Object.defineProperty(exports, '__esModule', {
+	  value: true
+	});
+
+	var _react = __webpack_require__(2);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _reactRedux = __webpack_require__(244);
+
+	var _utilsNav_list = __webpack_require__(262);
+
+	var _utilsNav_list2 = _interopRequireDefault(_utilsNav_list);
+
+	var _admin_user_list = __webpack_require__(273);
+
+	var _admin_user_list2 = _interopRequireDefault(_admin_user_list);
+
+	var _admin_user_creator = __webpack_require__(274);
+
+	var _admin_user_creator2 = _interopRequireDefault(_admin_user_creator);
+
+	var _actions = __webpack_require__(275);
+
+	var AdminUserPage = (function (_React$Component) {
+	  _inherits(AdminUserPage, _React$Component);
+
+	  function AdminUserPage() {
+	    _classCallCheck(this, AdminUserPage);
+
+	    _get(Object.getPrototypeOf(AdminUserPage.prototype), 'constructor', this).apply(this, arguments);
+	  }
+
+	  _createClass(AdminUserPage, [{
+	    key: 'componentDidMount',
+	    value: function componentDidMount() {
+	      this.props.dispatch((0, _actions.fetch_admin_users)());
+	    }
+	  }, {
+	    key: 'handleCreateAdminUser',
+	    value: function handleCreateAdminUser(username, password) {
+	      this.props.dispatch((0, _actions.create_admin_user)(username, password));
+	    }
+	  }, {
+	    key: 'handleChangePassword',
+	    value: function handleChangePassword(username, password) {
+	      this.props.dispatch((0, _actions.change_admin_user_password)(username, password));
+	    }
+	  }, {
+	    key: 'handleDeleteAdminUser',
+	    value: function handleDeleteAdminUser(username) {
+	      this.props.dispatch((0, _actions.delete_admin_user)(username));
+	    }
+	  }, {
+	    key: 'render',
+	    value: function render() {
+	      return _react2['default'].createElement(
+	        'div',
+	        { className: 'row' },
+	        _react2['default'].createElement(
+	          'div',
+	          { className: 'medium-3 columns' },
+	          _react2['default'].createElement(_utilsNav_list2['default'], null)
+	        ),
+	        _react2['default'].createElement(
+	          'div',
+	          { className: 'medium-9 columns' },
+	          _react2['default'].createElement(
+	            'h1',
+	            null,
+	            '管理员管理'
+	          ),
+	          _react2['default'].createElement(_admin_user_creator2['default'], { create_admin_user: this.handleCreateAdminUser.bind(this) }),
+	          _react2['default'].createElement(_admin_user_list2['default'], { admin_user_list: this.props.admin_user_management.admin_user_list, handle_change_password: this.handleChangePassword.bind(this), handle_delete_admin_user: this.handleDeleteAdminUser.bind(this) })
+	        )
+	      );
+	    }
+	  }]);
+
+	  return AdminUserPage;
+	})(_react2['default'].Component);
+
+	exports['default'] = (0, _reactRedux.connect)(function (state) {
+	  return { admin_user_management: state.admin_user_management };
+	})(AdminUserPage);
+	module.exports = exports['default'];
+
+/***/ },
+/* 273 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	var _get = __webpack_require__(159)['default'];
+
+	var _inherits = __webpack_require__(173)['default'];
+
+	var _createClass = __webpack_require__(184)['default'];
+
+	var _classCallCheck = __webpack_require__(187)['default'];
+
+	var _interopRequireDefault = __webpack_require__(1)['default'];
+
+	Object.defineProperty(exports, '__esModule', {
+	  value: true
+	});
+
+	var _react = __webpack_require__(2);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var AdminUserList = (function (_React$Component) {
+	  _inherits(AdminUserList, _React$Component);
+
+	  function AdminUserList() {
+	    _classCallCheck(this, AdminUserList);
+
+	    _get(Object.getPrototypeOf(AdminUserList.prototype), 'constructor', this).apply(this, arguments);
+	  }
+
+	  _createClass(AdminUserList, [{
+	    key: 'change_password',
+	    value: function change_password(username) {
+	      this.props.handle_change_password(username, _react2['default'].findDOMNode(this.refs['new_password_' + username]).value);
+	    }
+	  }, {
+	    key: 'delete_admin_user',
+	    value: function delete_admin_user(username) {
+	      if (!window.confirm('确认删除管理员 ' + username + '?')) {
+	        return;
+	      }
+	      this.props.handle_delete_admin_user(username);
+	    }
+	  }, {
+	    key: 'render',
+	    value: function render() {
+	      var _this = this;
+
+	      return _react2['default'].createElement(
+	        'table',
+	        { style: { width: '100%' } },
+	        _react2['default'].createElement(
+	          'thead',
+	          null,
+	          _react2['default'].createElement(
+	            'tr',
+	            null,
+	            _react2['default'].createElement(
+	              'th',
+	              null,
+	              '用户名'
+	            ),
+	            _react2['default'].createElement(
+	              'th',
+	              null,
+	              '修改密码'
+	            ),
+	            _react2['default'].createElement(
+	              'th',
+	              null,
+	              '操作'
+	            )
+	          )
+	        ),
+	        _react2['default'].createElement(
+	          'tbody',
+	          null,
+	          this.props.admin_user_list.map(function (user_info, index) {
+	            return _react2['default'].createElement(
+	              'tr',
+	              null,
+	              _react2['default'].createElement(
+	                'td',
+	                null,
+	                user_info.username
+	              ),
+	              _react2['default'].createElement(
+	                'td',
+	                null,
+	                _react2['default'].createElement(
+	                  'div',
+	                  { className: 'row collapse' },
+	                  _react2['default'].createElement(
+	                    'div',
+	                    { className: 'small-8 columns' },
+	                    _react2['default'].createElement('input', { type: 'text', ref: 'new_password_' + user_info.username })
+	                  ),
+	                  _react2['default'].createElement(
+	                    'div',
+	                    { className: 'small-4 columns' },
+	                    _react2['default'].createElement(
+	                      'button',
+	                      { className: 'button postfix', onClick: _this.change_password.bind(_this, user_info.username) },
+	                      '修改密码'
+	                    )
+	                  )
+	                )
+	              ),
+	              _react2['default'].createElement(
+	                'td',
+	                null,
+	                _react2['default'].createElement(
+	                  'button',
+	                  { className: 'button alert tiny', onClick: _this.delete_admin_user.bind(_this, user_info.username) },
+	                  '删除'
+	                )
+	              )
+	            );
+	          })
+	        )
+	      );
+	    }
+	  }]);
+
+	  return AdminUserList;
+	})(_react2['default'].Component);
+
+	exports['default'] = AdminUserList;
+	module.exports = exports['default'];
+
+/***/ },
+/* 274 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+
+	var _get = __webpack_require__(159)["default"];
+
+	var _inherits = __webpack_require__(173)["default"];
+
+	var _createClass = __webpack_require__(184)["default"];
+
+	var _classCallCheck = __webpack_require__(187)["default"];
+
+	var _interopRequireDefault = __webpack_require__(1)["default"];
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	var _react = __webpack_require__(2);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var AdminUserCreator = (function (_React$Component) {
+	  _inherits(AdminUserCreator, _React$Component);
+
+	  function AdminUserCreator() {
+	    _classCallCheck(this, AdminUserCreator);
+
+	    _get(Object.getPrototypeOf(AdminUserCreator.prototype), "constructor", this).apply(this, arguments);
+	  }
+
+	  _createClass(AdminUserCreator, [{
+	    key: "handleSubmit",
+	    value: function handleSubmit() {
+	      this.props.create_admin_user(_react2["default"].findDOMNode(this.refs.new_username).value, _react2["default"].findDOMNode(this.refs.new_password).value);
+	    }
+	  }, {
+	    key: "render",
+	    value: function render() {
+	      return _react2["default"].createElement(
+	        "div",
+	        { className: "panel" },
+	        _react2["default"].createElement(
+	          "div",
+	          { className: "row" },
+	          _react2["default"].createElement(
+	            "div",
+	            { className: "small-4 columns" },
+	            _react2["default"].createElement("input", { type: "text", ref: "new_username", placeholder: "用户名" })
+	          ),
+	          _react2["default"].createElement(
+	            "div",
+	            { className: "small-4 columns" },
+	            _react2["default"].createElement("input", { type: "text", ref: "new_password", placeholder: "密码" })
+	          ),
+	          _react2["default"].createElement(
+	            "div",
+	            { className: "small-4 columns" },
+	            _react2["default"].createElement(
+	              "button",
+	              { className: "button tiny", onClick: this.handleSubmit.bind(this) },
+	              "添加管理员"
+	            )
+	          )
+	        )
+	      );
+	    }
+	  }]);
+
+	  return AdminUserCreator;
+	})(_react2["default"].Component);
+
+	exports["default"] = AdminUserCreator;
+	module.exports = exports["default"];
+
+/***/ },
+/* 275 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	var _interopRequireDefault = __webpack_require__(1)['default'];
+
+	Object.defineProperty(exports, '__esModule', {
+	  value: true
+	});
+	exports.request_admin_users = request_admin_users;
+	exports.received_admin_users = received_admin_users;
+	exports.fetch_admin_users = fetch_admin_users;
+	exports.create_admin_user = create_admin_user;
+	exports.change_admin_user_password = change_admin_user_password;
+	exports.delete_admin_user = delete_admin_user;
+
+	var _md5 = __webpack_require__(231);
+
+	var _md52 = _interopRequireDefault(_md5);
+
+	var REQUEST_ADMIN_USERS = 'REQUEST_ADMIN_USERS';
+	exports.REQUEST_ADMIN_USERS = REQUEST_ADMIN_USERS;
+	var RECEIVED_ADMIN_USERS = 'RECEIVED_ADMIN_USERS';
+
+	exports.RECEIVED_ADMIN_USERS = RECEIVED_ADMIN_USERS;
+
+	function request_admin_users() {
+	  return { type: REQUEST_ADMIN_USERS };
+	}
+
+	function received_admin_users(data) {
+	  return {
+	    type: RECEIVED_ADMIN_USERS,
+	    data: data
+	  };
+	}
+
+	function fetch_admin_users() {
+	  return function (dispatch, getState) {
+	    dispatch(request_admin_users());
+	    $.get('/api/admin/admin_users', function (data) {
+	      dispatch(received_admin_users(data));
+	    });
+	  };
+	}
+
+	function create_admin_user(username, password) {
+	  return function (dispatch, getState) {
+	    $.post('/api/admin/create_admin_user.do', {
+	      username: username,
+	      password: (0, _md52['default'])((0, _md52['default'])(password))
+	    }, function (data) {
+	      dispatch(fetch_admin_users());
+	    });
+	  };
+	}
+
+	function change_admin_user_password(username, password) {
+	  return function (dispatch, getState) {
+	    $.post('/api/admin/change_password.do', {
+	      username: username,
+	      password: (0, _md52['default'])((0, _md52['default'])(password))
+	    }, function (data) {
+	      if (data.status == 200) {
+	        alert('修改密码成功！');
+	      }
+	      dispatch(fetch_admin_users());
+	    });
+	  };
+	}
+
+	function delete_admin_user(username) {
+	  return function (dispatch, getState) {
+	    $.get('/api/admin/delete_admin_user.do?username=' + encodeURIComponent(username), function (data) {
+	      dispatch(fetch_admin_users());
+	    });
+	  };
+	}
+
+/***/ },
+/* 276 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	var _Object$assign = __webpack_require__(277)['default'];
+
+	Object.defineProperty(exports, '__esModule', {
+	  value: true
+	});
+	exports.user_management = user_management;
 
 	var _actions = __webpack_require__(263);
 
-	var _redux = __webpack_require__(252);
-
-	function UserManagement(state, action) {
+	function user_management(state, action) {
 	  switch (action.type) {
 	    case _actions.REQUEST_USERS:
 	      return _Object$assign({}, state, {
 	        is_fetching: true,
 	        user_list: [],
 	        keyword: action.keyword,
-	        page: action.page
+	        page: action.page,
+	        user_status: action.user_status
 	      });
 	    case _actions.RECEIVED_USERS:
 	      if (action.data.status != 200) {
@@ -27776,8 +29157,13 @@
 	      }
 	      return _Object$assign({}, state, {
 	        is_fetching: false,
-	        user_list: action.data.user_list
+	        user_list: action.data.user_list,
+	        total_pages: action.data.pages
 	      });
+	    case _actions.CHANGE_USER_STATUS:
+	      return state;
+	    case _actions.USER_STATUS_CHANGED:
+	      return state;
 	    default:
 	      return state || {
 	        is_fetching: false,
@@ -27789,35 +29175,35 @@
 	}
 
 /***/ },
-/* 267 */
+/* 277 */
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = { "default": __webpack_require__(268), __esModule: true };
+	module.exports = { "default": __webpack_require__(278), __esModule: true };
 
 /***/ },
-/* 268 */
+/* 278 */
 /***/ function(module, exports, __webpack_require__) {
 
-	__webpack_require__(269);
+	__webpack_require__(279);
 	module.exports = __webpack_require__(171).Object.assign;
 
 /***/ },
-/* 269 */
+/* 279 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// 19.1.3.1 Object.assign(target, source)
 	var $def = __webpack_require__(169);
 
-	$def($def.S + $def.F, 'Object', {assign: __webpack_require__(270)});
+	$def($def.S + $def.F, 'Object', {assign: __webpack_require__(280)});
 
 /***/ },
-/* 270 */
+/* 280 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// 19.1.2.1 Object.assign(target, source, ...)
-	var toObject = __webpack_require__(271)
+	var toObject = __webpack_require__(281)
 	  , IObject  = __webpack_require__(165)
-	  , enumKeys = __webpack_require__(272);
+	  , enumKeys = __webpack_require__(282);
 
 	module.exports = __webpack_require__(172)(function(){
 	  return Symbol() in Object.assign({}); // Object.assign available and Symbol is native
@@ -27837,7 +29223,7 @@
 	} : Object.assign;
 
 /***/ },
-/* 271 */
+/* 281 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// 7.1.13 ToObject(argument)
@@ -27847,7 +29233,7 @@
 	};
 
 /***/ },
-/* 272 */
+/* 282 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// all enumerable object keys, includes symbols
@@ -27866,7 +29252,83 @@
 	};
 
 /***/ },
-/* 273 */
+/* 283 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	var _Object$assign = __webpack_require__(277)['default'];
+
+	Object.defineProperty(exports, '__esModule', {
+	  value: true
+	});
+	exports.admin_user_management = admin_user_management;
+
+	var _actions = __webpack_require__(275);
+
+	function admin_user_management(state, action) {
+	  switch (action.type) {
+	    case _actions.REQUEST_ADMIN_USERS:
+	      return _Object$assign({}, state, {
+	        is_fetching: true
+	      });
+	    case _actions.RECEIVED_ADMIN_USERS:
+	      return _Object$assign({}, state, {
+	        is_fetching: false,
+	        admin_user_list: action.data.admin_user_list
+	      });
+	    default:
+	      return state || {
+	        is_fetching: false,
+	        admin_user_list: []
+	      };
+	  }
+	}
+
+/***/ },
+/* 284 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	var _Object$assign = __webpack_require__(277)['default'];
+
+	Object.defineProperty(exports, '__esModule', {
+	  value: true
+	});
+	exports.order_management = order_management;
+
+	var _actions = __webpack_require__(269);
+
+	function order_management(state, action) {
+	  switch (action.type) {
+	    case _actions.REQUEST_ORDER_LIST:
+	      return _Object$assign({}, state, {
+	        is_fetching: true,
+	        keyword: action.keyword,
+	        status: action.status,
+	        page: action.page
+	      });
+	    case _actions.RECEIVED_ORDER_LIST:
+	      return _Object$assign({}, state, {
+	        is_fetching: false,
+	        order_list: action.data.order_list,
+	        total_page: action.data.pages
+	      });
+	    default:
+	      return state || {
+	        is_fetching: false,
+	        keyword: '',
+	        status: -1,
+	        page: 1,
+	        total_page: 0,
+	        order_list: []
+	      };
+	  }
+	}
+
+/***/ },
+/* 285 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -27888,7 +29350,7 @@
 	module.exports = exports['default'];
 
 /***/ },
-/* 274 */
+/* 286 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -27899,11 +29361,11 @@
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-	var _createLogger = __webpack_require__(275);
+	var _createLogger = __webpack_require__(287);
 
 	var _createLogger2 = _interopRequireDefault(_createLogger);
 
-	var _logger = __webpack_require__(276);
+	var _logger = __webpack_require__(288);
 
 	var _logger2 = _interopRequireDefault(_logger);
 
@@ -27926,7 +29388,7 @@
 	module.exports = exports['default'];
 
 /***/ },
-/* 275 */
+/* 287 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -28042,7 +29504,7 @@
 	module.exports = exports['default'];
 
 /***/ },
-/* 276 */
+/* 288 */
 /***/ function(module, exports) {
 
 	/**
