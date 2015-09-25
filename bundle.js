@@ -26086,12 +26086,12 @@
 	        { className: 'row' },
 	        _react2['default'].createElement(
 	          'div',
-	          { className: 'medium-3 columns' },
+	          { className: 'medium-2 columns' },
 	          _react2['default'].createElement(_utilsNav_list2['default'], null)
 	        ),
 	        _react2['default'].createElement(
 	          'div',
-	          { className: 'medium-9 columns' },
+	          { className: 'medium-10 columns' },
 	          _react2['default'].createElement(
 	            'h1',
 	            null,
@@ -28278,12 +28278,12 @@
 	        { className: 'row' },
 	        _react2['default'].createElement(
 	          'div',
-	          { className: 'medium-3 columns' },
+	          { className: 'medium-2 columns' },
 	          _react2['default'].createElement(_utilsNav_list2['default'], null)
 	        ),
 	        _react2['default'].createElement(
 	          'div',
-	          { className: 'medium-9 columns' },
+	          { className: 'medium-10 columns' },
 	          _react2['default'].createElement(
 	            'h1',
 	            null,
@@ -28806,12 +28806,12 @@
 	        { className: 'row' },
 	        _react2['default'].createElement(
 	          'div',
-	          { className: 'medium-3 columns' },
+	          { className: 'medium-2 columns' },
 	          _react2['default'].createElement(_utilsNav_list2['default'], null)
 	        ),
 	        _react2['default'].createElement(
 	          'div',
-	          { className: 'medium-9 columns' },
+	          { className: 'medium-10 columns' },
 	          _react2['default'].createElement(
 	            'h1',
 	            null,

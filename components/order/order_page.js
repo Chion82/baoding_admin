@@ -34,10 +34,10 @@ class OrderPage extends React.Component {
   render() {
     return (
       <div className="row">
-        <div className="medium-3 columns">
+        <div className="medium-2 columns">
           <NavList />
         </div>
-        <div className="medium-9 columns">
+        <div className="medium-10 columns">
           <h1>委单管理</h1>
           <a href="javascript:void(0)" onClick={this.handleNewOrder.bind(this)}>发布新委单</a>
           <OrderSelector handle_submit={this.loadPage.bind(this)} />
