@@ -23,6 +23,14 @@ class OrderPage extends React.Component {
       this.props.dispatch(fetch_order_list(this.props.order_management.keyword, this.props.order_management.status, this.props.order_management.page));
     });
   }
+  handleNewOrder() {
+    $.get('/api/admin/login_as_user.do?username=admin', (data)=>{
+      if (data.status != 200) {
+        alert('模拟登录失败。请确认已注册admin用户。');
+      }
+      window.location.href=`/user_center/post_order.html`;
+    });
+  }
   render() {
     return (
       <div className="row">
@@ -31,6 +39,7 @@ class OrderPage extends React.Component {
         </div>
         <div className="medium-9 columns">
           <h1>委单管理</h1>
+          <a href="javascript:void(0)" onClick={this.handleNewOrder.bind(this)}>发布新委单</a>
           <OrderSelector handle_submit={this.loadPage.bind(this)} />
           <OrderList order_list={this.props.order_management.order_list} handle_update_order_status={this.updateOrderStatus.bind(this)} />
           <div>
