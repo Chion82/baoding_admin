@@ -13,8 +13,6 @@
     "tests"
   ],
   "dependencies": {
-    "foundation": "~5.5.2",
-    "react": "~0.13.3",
-    "zepto": "~1.1.6"
+    "foundation": "~5.5.2"
   }
 }
