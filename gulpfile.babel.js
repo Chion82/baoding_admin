@@ -42,7 +42,10 @@ let webpack_config = {
 	          }
 					}
       ]
-  }
+  },
+	plugins : [
+		new webpack.optimize.UglifyJsPlugin()
+	]
 };
 
 gulp.task("webpack:build", function(callback) {
