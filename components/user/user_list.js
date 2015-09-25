@@ -1,4 +1,5 @@
 import React from 'react';
+import md5 from 'md5';
 
 class UserList extends React.Component {
   handleChangeUserStatus(username, new_status){
@@ -12,6 +13,18 @@ class UserList extends React.Component {
         }
         window.location.href='/user_center/details_info.html';
       });
+  }
+  handleChangeUserPassword(username) {
+    $.post('/api/admin/change_user_password.do', {
+      username : username,
+      password : md5(md5(React.findDOMNode(this.refs['new_password_' + username]).value))
+    }, (data)=>{
+      if (data.status == 200) {
+        alert('修改成功');
+      } else {
+        alert('修改失败');
+      }
+    });
   }
   render() {
     return (
@@ -58,6 +71,8 @@ class UserList extends React.Component {
                   {user_info.contact_email}
                 </td>
                 <td style={{width: '400px'}}>
+                  <input type="text" placeholder="修改密码" ref={'new_password_' + user_info.username} />
+                  <a href="javascript:void(0)" onClick={this.handleChangeUserPassword.bind(this, user_info.username)}>确认修改密码</a><br/>
                   <a href="javascript:void(0)" onClick={this.handleModifyUserDetails.bind(this, user_info.username)}>编辑详细信息</a><br/>
                   状态设为：<br/>
                   <a href="javascript:void(0)" onClick={this.handleChangeUserStatus.bind(this, user_info.username, 3)}>正常</a><br/>
