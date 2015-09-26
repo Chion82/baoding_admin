@@ -1,5 +1,5 @@
 import React from 'react';
-import NavList from './utils/nav_list';
+import NavList from '../utils/nav_list';
 
 class AdminPage extends React.Component {
   render() {
