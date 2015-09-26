@@ -33,20 +33,15 @@ class OrderPage extends React.Component {
   }
   render() {
     return (
-      <div className="row">
-        <div className="medium-2 columns">
-          <NavList />
-        </div>
-        <div className="medium-10 columns">
-          <h1>委单管理</h1>
-          <a href="javascript:void(0)" onClick={this.handleNewOrder.bind(this)}>发布新委单</a>
-          <OrderSelector handle_submit={this.loadPage.bind(this)} />
-          <OrderList order_list={this.props.order_management.order_list} handle_update_order_status={this.updateOrderStatus.bind(this)} />
-          <div>
-            <a href="javascript:void(0)" onClick={this.loadPage.bind(this, this.props.order_management.keyword, this.props.order_management.status, this.props.order_management.page-1)}>上一页</a>
-            {this.props.order_management.page} / {this.props.order_management.total_page}
-            <a href="javascript:void(0)" onClick={this.loadPage.bind(this, this.props.order_management.keyword, this.props.order_management.status, this.props.order_management.page+1)}>下一页</a>
-          </div>
+      <div>
+        <h1>委单管理</h1>
+        <a href="javascript:void(0)" onClick={this.handleNewOrder.bind(this)}>发布新委单</a>
+        <OrderSelector handle_submit={this.loadPage.bind(this)} />
+        <OrderList order_list={this.props.order_management.order_list} handle_update_order_status={this.updateOrderStatus.bind(this)} />
+        <div>
+          <a href="javascript:void(0)" onClick={this.loadPage.bind(this, this.props.order_management.keyword, this.props.order_management.status, this.props.order_management.page-1)}>上一页</a>
+          {this.props.order_management.page} / {this.props.order_management.total_page}
+          <a href="javascript:void(0)" onClick={this.loadPage.bind(this, this.props.order_management.keyword, this.props.order_management.status, this.props.order_management.page+1)}>下一页</a>
         </div>
       </div>
     );

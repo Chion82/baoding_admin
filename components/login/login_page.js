@@ -19,7 +19,7 @@ class LoginPage extends React.Component {
     }, (data)=>{
       switch(data.status) {
         case 200:
-          this.history.pushState(null, '/user');
+          this.history.pushState(null, '/admin_center/user');
           break;
         default:
           alert('登录失败，请检查用户名或密码是否正确。');

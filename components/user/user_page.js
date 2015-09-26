@@ -20,19 +20,14 @@ class UserPage extends React.Component {
     }
     render () {
       return (
-        <div className="row">
-          <div className="medium-2 columns">
-            <NavList />
-          </div>
-          <div className="medium-10 columns">
-            <h1>用户管理</h1>
-            <UserSelector refresh={this.load_page.bind(this)} />
-            <UserList user_list={this.props.user_management.user_list} on_change_user_status={this.on_change_user_status.bind(this)}/>
-            <div>
-              <a href="javascript:void(0)" onClick={this.load_page.bind(this, this.props.user_management.user_status, this.props.user_management.keyword, this.props.user_management.page-1)} >上一页</a>
-              {this.props.user_management.page} / {this.props.user_management.total_pages}
-              <a href="javascript:void(0)" onClick={this.load_page.bind(this, this.props.user_management.user_status, this.props.user_management.keyword, this.props.user_management.page+1)} >下一页</a>
-            </div>
+        <div>
+          <h1>用户管理</h1>
+          <UserSelector refresh={this.load_page.bind(this)} />
+          <UserList user_list={this.props.user_management.user_list} on_change_user_status={this.on_change_user_status.bind(this)}/>
+          <div>
+            <a href="javascript:void(0)" onClick={this.load_page.bind(this, this.props.user_management.user_status, this.props.user_management.keyword, this.props.user_management.page-1)} >上一页</a>
+            {this.props.user_management.page} / {this.props.user_management.total_pages}
+            <a href="javascript:void(0)" onClick={this.load_page.bind(this, this.props.user_management.user_status, this.props.user_management.keyword, this.props.user_management.page+1)} >下一页</a>
           </div>
         </div>
       );

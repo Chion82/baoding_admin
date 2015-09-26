@@ -1,5 +1,6 @@
 import React from 'react';
 import { Router, Route, Link } from 'react-router';
+import AdminPage from './admin_page/admin_page';
 import LoginPage from './login/login_page';
 import HelloPage from './hello/hello_page';
 import UserPage from './user/user_page';
@@ -35,10 +36,11 @@ class App extends React.Component {
         {() =>
           <Router>
             <Route path="/" component={LoginPage} />
-            <Route path="/hello" component={HelloPage} />
-            <Route path="/user" component={UserPage} />
-            <Route path="/admin_user" component={AdminUserPage} />
-            <Route path="/order" component={OrderPage} />
+            <Route path="/admin_center" component={AdminPage} >
+              <Route path="user" component={UserPage} />
+              <Route path="admin_user" component={AdminUserPage} />
+              <Route path="order" component={OrderPage} />
+            </Route>
           </Router>
         }
       </Provider>

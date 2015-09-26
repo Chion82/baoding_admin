@@ -20,15 +20,10 @@ class AdminUserPage extends React.Component {
   }
   render() {
     return (
-      <div className="row">
-        <div className="medium-2 columns">
-          <NavList />
-        </div>
-        <div className="medium-10 columns">
-          <h1>管理员管理</h1>
-          <AdminUserCreator create_admin_user={this.handleCreateAdminUser.bind(this)} />
-          <AdminUserList admin_user_list={this.props.admin_user_management.admin_user_list} handle_change_password={this.handleChangePassword.bind(this)} handle_delete_admin_user={this.handleDeleteAdminUser.bind(this)}/>
-        </div>
+      <div>
+        <h1>管理员管理</h1>
+        <AdminUserCreator create_admin_user={this.handleCreateAdminUser.bind(this)} />
+        <AdminUserList admin_user_list={this.props.admin_user_management.admin_user_list} handle_change_password={this.handleChangePassword.bind(this)} handle_delete_admin_user={this.handleDeleteAdminUser.bind(this)}/>
       </div>
     )
   }

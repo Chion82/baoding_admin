@@ -12,9 +12,9 @@ class NavList extends React.Component {
   render() {
     return (
       <ul className="side-nav">
-        <li><Link to="/user">用户管理</Link></li>
-        <li><Link to="/order">委单管理</Link></li>
-        <li><Link to="/admin_user">管理员管理</Link></li>
+        <li><Link to="/admin_center/user">用户管理</Link></li>
+        <li><Link to="/admin_center/order">委单管理</Link></li>
+        <li><Link to="/admin_center/admin_user">管理员管理</Link></li>
         <li><a href="javascript:void(0)" onClick={this.logout.bind(this)}>退出登录</a></li>
       </ul>
     );
