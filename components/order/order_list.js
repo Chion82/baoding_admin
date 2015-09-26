@@ -9,6 +9,14 @@ class OrderList extends React.Component {
       window.location.href=`/user_center/edit_order.html?order_id=${order_id}`;
     });
   }
+  handleViewProgress(order_id) {
+    $.get('/api/admin/login_as_user.do?username=admin', (data)=>{
+      if (data.status != 200) {
+        alert('模拟登录失败。请确认已注册admin用户。');
+      }
+      window.location.href=`/user_center/order_progress.html?order_id=${order_id}`;
+    });
+  }
   handleUpdateOrderStatus(order_id) {
     this.props.handle_update_order_status(order_id,
       React.findDOMNode(this.refs['status_input_' + order_id]).value
@@ -53,6 +61,8 @@ class OrderList extends React.Component {
                 <td>{order_info.accept_user}</td>
                 <td>
                   <a href="javascript:void(0)" onClick={this.handleModify.bind(this, order_info.order_id)}>编辑委单详情</a>
+                  <br />
+                  <a href="javascript:void(0)" onClick={this.handleViewProgress.bind(this, order_info.order_id)}>查看进度</a>
                   <br />修改状态：
                   <select ref={'status_input_' + order_info.order_id}>
                     <option value="0">被取消</option>
