@@ -22,6 +22,18 @@ class OrderList extends React.Component {
       React.findDOMNode(this.refs['status_input_' + order_id]).value
     );
   }
+  handleUpdateBidExpires(order_id) {
+    $.post('/api/admin/change_bid_expires.do', {
+      days : React.findDOMNode(this.refs['bid_expires_input_' + order_id]).value,
+      order_id
+    }, (data)=>{
+      if (data.status == 200) {
+        alert('修改竞标成功');
+      } else {
+        alert('修改失败');
+      }
+    });
+  }
   render() {
     return (
       <table>
@@ -38,6 +50,10 @@ class OrderList extends React.Component {
         </thead>
         <tbody>
           {this.props.order_list.map((order_info, index)=>{
+            let bid_expires_modifier = '';
+            if (order_info.status == 5) {
+              bid_expires_modifier = (<div>修改竞标过期为<input type="number" ref={"bid_expires_input_" + order_info.order_id} defaultValue="7" style={{width:'50px'}} />天后<br/><a href="javascript:void(0);" onClick={this.handleUpdateBidExpires.bind(this, order_info.order_id)}>确定</a></div>);
+            }
             return (
               <tr>
                 <td>{order_info.order_id}</td>
@@ -51,6 +67,7 @@ class OrderList extends React.Component {
                   {order_info.status==6 && '催收中'}
                   {order_info.status==7 && '结算中'}
                   {order_info.status==8 && '已结算'}
+                  {bid_expires_modifier}
                 </td>
                 <td>
                   {order_info.debtor_type==0 && '个人'}
